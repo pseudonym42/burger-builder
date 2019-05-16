@@ -1,10 +1,15 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 Tech stack:
-* React 16.8
-* React DOM 16.8
-* React Scripts 3.0
-* PropTypes 15.7
+
+- React 16.8
+
+- React DOM 16.8
+
+- React Scripts 3.0
+
+- PropTypes 15.7
+
 
 ## Available Scripts
 

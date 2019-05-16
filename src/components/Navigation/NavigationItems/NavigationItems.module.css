@@ -1,0 +1,23 @@
+.NavigationItems {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex; /* so list items next to each other */
+    align-items: center;
+    height: 100%;
+    flex-flow: column;
+}
+
+/* For larger screens */
+
+/*
+    Note that below we override some settings which were setup above
+    for better looks on larger screens. If a property is not overwritten
+    then it inherits from above class declarations
+*/
+
+@media (min-width: 500px) {
+    .NavigationItems {
+        flex-flow: row;
+    }
+}

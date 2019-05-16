@@ -1,0 +1,30 @@
+.Toolbar {
+    width: 100%;
+    height: 56px;
+    position: fixed; /* always at the top even if scroll */
+    background-color: #703B09;
+    left: 0;
+    top: 0;
+    display: flex; /* all items to align to each other */
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    box-sizing: border-box;
+    z-index: 90; /* this number should be lower than the one we used for Backdrop */
+}
+
+.Toolbar nav {
+    height: 100%;
+}
+
+.Logo {
+    height: 80%;
+}
+
+
+/* For mobile devices */
+@media (max-width: 499px) {
+    .DesktopOnly {
+        display: none;
+    }
+}

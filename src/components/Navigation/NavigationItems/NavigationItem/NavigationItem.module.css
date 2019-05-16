@@ -1,0 +1,55 @@
+.NavigationItem {
+    margin: 10px 0;
+    box-sizing: border-box;
+    display: block;
+    width: 100%;
+}
+
+.NavigationItem a {
+    color: #8F5C2C;
+    text-decoration: none;
+    width: 100%;
+    box-sizing: border-box; /* so height includes the padding and the border */
+    display: block;
+}
+
+.NavigationItem a:hover,
+.NavigationItem a:active,
+.NavigationItem a.active {
+    color: #40A4C8;
+}
+
+
+/* For larger screens */
+
+/*
+    Note that below we override some settings which were setup above
+    for better looks on larger screens. If a property is not overwritten
+    then it inherits from above class declarations
+*/
+   
+@media (min-width: 500px) {
+    .NavigationItem {
+        margin: 0;
+        box-sizing: border-box;
+        display: flex; /* this will centre the link vertically */
+        align-items: center;
+        height: 100%;
+        width: auto; /* override above 100% */
+    }
+    
+    .NavigationItem a {
+        color: white;
+        height: 100%;
+        padding: 16px 10px; /* top&bottom left&right */
+        border-bottom: 4px solid transparent;
+    }
+    
+    .NavigationItem a:hover,
+    .NavigationItem a:active,
+    .NavigationItem a.active {
+        background-color: #8F5C2C;
+        border-bottom: 4px solid #40A4C8;
+        color: white;
+    }
+}

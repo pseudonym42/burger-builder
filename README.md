@@ -1,4 +1,10 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Burger Builder App
+
+This is a mobile first application for building and ordering a burger.
+
+![picture](demo/demo_screen.png)
+
+Bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 Tech stack:
 

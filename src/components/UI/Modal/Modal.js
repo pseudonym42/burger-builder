@@ -4,11 +4,18 @@ import Backdrop from '../Backdrop/Backdrop'
 
 class Modal extends Component {
     
-    // we update component only when it is displayed, i.e.
-    // if the modal is not being displayed there's no need
-    // to update it
+    /*
+        We update component only when it is displayed, i.e.
+        if the modal is not being displayed there's no need
+        to update it. Also we update component when we pass
+        different child component to it, e.g. when we pass
+        Spinner component instead of Order Summary
+    */
     shouldComponentUpdate(nextProps, nextState) {
-        return nextProps.show !== this.props.show;
+        return (
+            nextProps.show !== this.props.show ||
+            nextProps.children !== this.props.children
+        )
     }
 
     render() {

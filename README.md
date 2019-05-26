@@ -16,6 +16,10 @@ Tech stack:
 
 - PropTypes 15.7
 
+- Axios 0.18
+
+- Google Firebase
+
 
 ## Available Scripts
 

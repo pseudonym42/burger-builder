@@ -3,6 +3,9 @@ import Burger from '../../components/Burger/Burger';
 import BuildControls from '../../components/Burger/BuildControls/BuildControls';
 import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
 import Modal from '../../components/UI/Modal/Modal';
+import Spinner from '../../components/UI/Spinner/Spinner';
+
+import axios from '../../axios-orders';
 
 
 const INGREDIENT_PRICES = {
@@ -23,7 +26,8 @@ class BurgerBuilder extends Component {
         },
         totalCost: 4,
         purchasable: false,
-        orderSummaryVisible: false
+        orderSummaryVisible: false,
+        loading: false
     }
 
     updatePurchaseState(ingredients) {
@@ -101,7 +105,56 @@ class BurgerBuilder extends Component {
     }
 
     buyBurger = () => {
-        console.log('buying...');
+
+        this.setState({
+            loading: true
+        });
+
+        /*
+            Note that in real world app you would not submit the price
+            from client but rather calculate the price on the server
+            so user cannot manipulate it
+        */
+        const order = {
+            ingredients: this.state.ingredients,
+            price: this.state.totalCost,
+            customer: {
+                name: "Jack Doe",
+                address: {
+                    country: "Roman Empire",
+                    zipCode: "41351"
+                },
+                email: "jack.doe@test.com"
+            },
+            deliveryOption: 'express'
+        }
+
+        /*
+            we are using Firebase, so we did not create an API endpoint
+            to handle our requests. But they will get created magically,
+            for this to work we need to specify a namespace where all
+            key-value pairs will be created like this:
+                
+                /<namespace>.json
+
+            Note that below path will be appended to the baseURL to send
+            the post request
+        */
+        axios.post("/orders.json", order)
+            .then(response => {
+                console.log("Order placed!");
+                this.setState({
+                    loading: false,
+                    orderSummaryVisible: false
+                });
+            })
+            .catch(error => {
+                console.log("ERROR: could not place the order!")
+                this.setState({
+                    loading: false,
+                    orderSummaryVisible: false
+                });
+            })
     }
 
     render () {
@@ -114,18 +167,25 @@ class BurgerBuilder extends Component {
             disabledInfo[item] = disabledInfo[item] <= 0;
         }
 
+        let orderSummaryContent = (
+            <OrderSummary
+                ingredients={this.state.ingredients}
+                returnToBurgerBuilder={this.returnToBurgerBuilder}
+                buyBurger={this.buyBurger}
+                totalCost={this.state.totalCost}
+            />            
+        )
+        if (this.state.loading) {
+            orderSummaryContent = <Spinner />;
+        }
+
         return (
             <React.Fragment>
                 <Modal 
                     show={this.state.orderSummaryVisible}
                     returnToBurgerBuilder={this.returnToBurgerBuilder}
                 >
-                    <OrderSummary
-                        ingredients={this.state.ingredients}
-                        returnToBurgerBuilder={this.returnToBurgerBuilder}
-                        buyBurger={this.buyBurger}
-                        totalCost={this.state.totalCost}
-                    />
+                    {orderSummaryContent}
                 </Modal>
                 <Burger ingredients={this.state.ingredients}/>
                 <div>

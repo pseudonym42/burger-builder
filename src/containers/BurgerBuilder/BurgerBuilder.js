@@ -4,6 +4,7 @@ import BuildControls from '../../components/Burger/BuildControls/BuildControls';
 import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
 import Modal from '../../components/UI/Modal/Modal';
 import Spinner from '../../components/UI/Spinner/Spinner';
+import ErrorHandler from '../../hoc/ErrorHandler/ErrorHandler';
 
 import axios from '../../axios-orders';
 
@@ -183,7 +184,7 @@ class BurgerBuilder extends Component {
             <React.Fragment>
                 <Modal 
                     show={this.state.orderSummaryVisible}
-                    returnToBurgerBuilder={this.returnToBurgerBuilder}
+                    onClickFunction={this.returnToBurgerBuilder}
                 >
                     {orderSummaryContent}
                 </Modal>
@@ -203,4 +204,4 @@ class BurgerBuilder extends Component {
     }
 }
 
-export default BurgerBuilder;
+export default ErrorHandler(BurgerBuilder, axios);

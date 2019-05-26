@@ -21,7 +21,7 @@ class Modal extends Component {
     render() {
         return (
             <React.Fragment>
-                <Backdrop show={this.props.show} onClickFunction={this.props.returnToBurgerBuilder}/>
+                <Backdrop show={this.props.show} onClickFunction={this.props.onClickFunction}/>
                 <div
                     className={styles.Modal}
                     style={{

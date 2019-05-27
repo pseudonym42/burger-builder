@@ -19,14 +19,14 @@ const errorHandler = (WrappedComponent, axios) => {
                 error: null
             }
 
-            componentDidMount() {
+            componentWillMount() {
                 /*
                     Axios interceptors (Middleware) to process requests
 
                     Note that .use() method one argument which needs
                     to be a function to process a request
                 */
-                axios.interceptors.request.use(request => {
+                this.reqInterceptor = axios.interceptors.request.use(request => {
                     // set error to null whenever new request is sent
                     this.setState({
                         error: null
@@ -44,15 +44,34 @@ const errorHandler = (WrappedComponent, axios) => {
                     the errors
 
                 */
-                axios.interceptors.response.use(response => response, error => {
-                    // note that below the error we assign to error
-                    // key in the state is an object, which contains
-                    // all the data about the error
-                    this.setState({
-                        error: error
-                    });
-                });
+               this.resInterceptor = axios.interceptors.response.use(
 
+                    response => {
+                        return response;
+                    },
+                    
+                    error => {
+                        // note that below the error we assign to error
+                        // key in the state is an object, which contains
+                        // all the data about the error
+                        this.setState({
+                            error: error
+                        });
+                    }
+                );
+
+            }
+
+            /*
+                When the WrappedComponent gets unmounted the we also need
+                to remove the interceptors to prevent memory leak
+
+                Note that this method here runs when child component (WrappedComponent
+                in our case) gets its own componentWillUnmount method run
+            */
+            componentWillUnmount() {
+                axios.interceptors.request.eject(this.reqInterceptor);
+                axios.interceptors.response.eject(this.resInterceptor);
             }
 
             removeErrorMessage = () => {

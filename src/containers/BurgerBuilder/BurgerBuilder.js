@@ -19,17 +19,53 @@ const INGREDIENT_PRICES = {
 class BurgerBuilder extends Component {
 
     state = {
-        ingredients: {
-            salad: 0,
-            bacon: 0,
-            cheese: 0,
-            meat: 0
-        },
+        ingredients: null,
         totalCost: 4,
         purchasable: false,
         orderSummaryVisible: false,
-        loading: false
+        // true when order is POSTed and being processed
+        loading: false,
+        /*
+            this is additional error flag in addition to ErrorHandler
+            status, which covers componentDidMount related scenario when
+            error happens while fetching ingredients
+        */
+        error: false
     }
+
+    /************************************************
+    Life Cycle Hooks
+    *************************************************/
+
+    componentDidMount() {
+        /*
+            Note that if you'd like to test the catch error functionality
+            you might change URL to '/ingredients' this will reject the 
+            promise thus triggering the .catch section of the code
+
+            However, the Firebase backend will still return 200 OK response
+            if you change URL to '/random.json', keep this mind. This behaviour
+            of Firebase (this might be an issue with axios though?) have not been
+            taken into account here
+        */
+        axios.get('/ingredients.json')
+            .then(response => {
+                this.setState({
+                    ingredients: response.data
+                });
+            })
+            .catch(error => {
+                console.log(error);
+                this.setState({
+                    error: true
+                });
+            })
+    }
+
+
+    /************************************************
+    Methods
+    *************************************************/
 
     updatePurchaseState(ingredients) {
         const sum = Object.values(ingredients).reduce((total, currentValue) => {
@@ -168,16 +204,47 @@ class BurgerBuilder extends Component {
             disabledInfo[item] = disabledInfo[item] <= 0;
         }
 
-        let orderSummaryContent = (
-            <OrderSummary
-                ingredients={this.state.ingredients}
-                returnToBurgerBuilder={this.returnToBurgerBuilder}
-                buyBurger={this.buyBurger}
-                totalCost={this.state.totalCost}
-            />            
-        )
-        if (this.state.loading) {
+        /* 
+            set order summary content, note that the order summary content
+            is set to a Spinner if:
+
+                1) On initial page load the ingredients is null, so until
+                   they are fetched the Spinner got to be displayed
+                2) When user submitted the order via POST request so we
+                   need to display the Spinner
+        */
+        let orderSummaryContent;
+        if (this.state.loading || !this.state.ingredients) {
             orderSummaryContent = <Spinner />;
+        } else {
+            orderSummaryContent = (
+                <OrderSummary
+                    ingredients={this.state.ingredients}
+                    returnToBurgerBuilder={this.returnToBurgerBuilder}
+                    buyBurger={this.buyBurger}
+                    totalCost={this.state.totalCost}
+                />
+            );            
+        }
+
+        // set burger display and controls
+        let burger = this.state.error ? <p>Error: Ingredients cannot be displayed!</p> : <Spinner />;
+        if (this.state.ingredients) {
+            burger = (
+                <React.Fragment>
+                    <Burger ingredients={this.state.ingredients}/>
+                    <div>
+                        <BuildControls
+                            addIngredients={this.addIngredients}
+                            removeIngredients={this.removeIngredients}
+                            disabledInfo={disabledInfo}
+                            totalCost={this.state.totalCost}
+                            purchasable={this.state.purchasable}
+                            displayOrderSummary={this.displayOrderSummary}
+                        />
+                    </div>
+                </React.Fragment>
+            );
         }
 
         return (
@@ -188,17 +255,7 @@ class BurgerBuilder extends Component {
                 >
                     {orderSummaryContent}
                 </Modal>
-                <Burger ingredients={this.state.ingredients}/>
-                <div>
-                    <BuildControls
-                        addIngredients={this.addIngredients}
-                        removeIngredients={this.removeIngredients}
-                        disabledInfo={disabledInfo}
-                        totalCost={this.state.totalCost}
-                        purchasable={this.state.purchasable}
-                        displayOrderSummary={this.displayOrderSummary}
-                    />
-                </div>
+                {burger}
             </React.Fragment>
         );
     }

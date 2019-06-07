@@ -19,13 +19,13 @@ const orderSummary = (props) => {
             <ul>
                 {summary}
             </ul>
-            <p>Total cost: <strong>{props.totalCost.toFixed(2)}</strong> pounds</p>
-            <p>Continue to checkout?</p>
+            <p>Total cost: <strong>{props.totalCost.toFixed(2)}</strong> GBP</p>
+
             <Button 
                 buttonType="Success"
                 action={props.buyBurger}
             >
-                BUY
+                PREVIEW ORDER
             </Button>
             <Button 
                 buttonType="Danger"

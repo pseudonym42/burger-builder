@@ -13,7 +13,7 @@ const controls = [
 const buildControls = (props) => {
     return(
         <div className={styles.BuildControls}>
-            <p>Total Cost: <strong>{props.totalCost.toFixed(2)}</strong></p>
+            <p>Total Cost: <strong>{props.totalCost.toFixed(2)}</strong> GBP</p>
             {
                 controls.map((control) => {
                     return (

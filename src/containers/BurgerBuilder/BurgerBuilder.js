@@ -142,56 +142,20 @@ class BurgerBuilder extends Component {
     }
 
     buyBurger = () => {
-
-        this.setState({
-            loading: true
-        });
-
-        /*
-            Note that in real world app you would not submit the price
-            from client but rather calculate the price on the server
-            so user cannot manipulate it
-        */
-        const order = {
-            ingredients: this.state.ingredients,
-            price: this.state.totalCost,
-            customer: {
-                name: "Jack Doe",
-                address: {
-                    country: "Roman Empire",
-                    zipCode: "41351"
-                },
-                email: "jack.doe@test.com"
-            },
-            deliveryOption: 'express'
+        
+        const queryParams = [];
+        for (let [ingr, price] of Object.entries(this.state.ingredients)) {
+            queryParams.push(
+                `${encodeURIComponent(ingr)}=${encodeURIComponent(price)}`
+            );
         }
 
-        /*
-            we are using Firebase, so we did not create an API endpoint
-            to handle our requests. But they will get created magically,
-            for this to work we need to specify a namespace where all
-            key-value pairs will be created like this:
-                
-                /<namespace>.json
+        queryParams.push(`totalCost=${this.state.totalCost}`);
 
-            Note that below path will be appended to the baseURL to send
-            the post request
-        */
-        axios.post("/orders.json", order)
-            .then(response => {
-                console.log("Order placed!");
-                this.setState({
-                    loading: false,
-                    orderSummaryVisible: false
-                });
-            })
-            .catch(error => {
-                console.log("ERROR: could not place the order!")
-                this.setState({
-                    loading: false,
-                    orderSummaryVisible: false
-                });
-            })
+        this.props.history.push({
+            pathname: '/checkout',
+            search: '?' + queryParams.join('&')
+        });
     }
 
     render () {

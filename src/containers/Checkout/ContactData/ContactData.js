@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import Button from '../../../components/UI/Button/Button';
+import Input from '../../../components/UI/Input/Input';
 import Spinner from '../../../components/UI/Spinner/Spinner';
 import styles from './ContactData.module.css';
 import axios from '../../../axios-orders';
@@ -8,11 +9,49 @@ import axios from '../../../axios-orders';
 class ContactData extends Component {
 
     state = {
-        name: '',
-        email: '',
-        address: {
-            street: '',
-            postCode: ''
+        orderForm: {
+            name: {
+                elementType: 'input',
+                elementConfig: {
+                    type: 'text',
+                    placeholder: 'Your name'
+                },
+                value: ''
+            },
+            street: {
+                elementType: 'input',
+                elementConfig: {
+                    type: 'text',
+                    placeholder: 'Your street'
+                },
+                value: ''
+            },
+            postcode: {
+                elementType: 'input',
+                elementConfig: {
+                    type: 'text',
+                    placeholder: 'Your postcode'
+                },
+                value: ''
+            },
+            email: {
+                elementType: 'input',
+                elementConfig: {
+                    type: 'email',
+                    placeholder: 'Your email'
+                },
+                value: ''
+            },
+            deliveryOption: {
+                elementType: 'select',
+                elementConfig: {
+                    options: [
+                        {value: 'express', displayValue: 'Express'},
+                        {value: 'standard', displayValue: 'Standard'}
+                    ]
+                },
+                value: ''
+            }
         },
         loading: false
     }
@@ -30,16 +69,7 @@ class ContactData extends Component {
         */
         const order = {
             ingredients: this.props.ingredients,
-            price: this.props.cost,
-            customer: {
-                name: "Jack Doe",
-                address: {
-                    country: "Roman Empire",
-                    zipCode: "41351"
-                },
-                email: "jack.doe@test.com"
-            },
-            deliveryOption: 'express'
+            price: this.props.cost
         }
 
         /*
@@ -69,14 +99,56 @@ class ContactData extends Component {
             })
     }
 
+    // inputIdentifier below will refer to postcode, email, street etc
+    inputChangedHandler = (event, inputIdentifier) => {
+        // note that spread operator does only shallow copy
+        const updatedOrderForm = {
+            ...this.state.orderForm
+        };
+
+        // b'cos above copy is shallow and we need somehow get to value
+        // property of input field in the state object - we need to
+        // copy the specific input field data into another variable,
+        // change its value and then update updatedOrderForm accordingly
+        const updatedFormElement = {
+            ...updatedOrderForm[inputIdentifier]
+        };
+        updatedFormElement.value = event.target.value;
+        updatedOrderForm[inputIdentifier] = updatedFormElement;
+
+        // now we can update the state
+        this.setState({
+            orderForm: updatedOrderForm
+        });
+
+    }
+
     render() {
+
+        // generate form fields
+        const formElementsArray = [];
+        for (let key in this.state.orderForm) {
+            formElementsArray.push({
+                id: key,
+                config: this.state.orderForm[key]
+            });
+        }
 
         let orderForm = (
             <form>
-                <input className={styles.Input} type="text" name="name" placeholder="Your name" />
-                <input className={styles.Input} type="email" name="email" placeholder="Your email" />
-                <input className={styles.Input} type="text" name="street" placeholder="Street" />
-                <input className={styles.Input} type="text" name="postal" placeholder="Postal Code" />
+                {
+                    formElementsArray.map((formElement) => {
+                        return (
+                            <Input
+                                key={formElement.id}
+                                elementType={formElement.config.elementType}
+                                elementConfig={formElement.config.elementConfig}
+                                defaultValue={formElement.config.value}
+                                changed={(event) => this.inputChangedHandler(event, formElement.id)}
+                            />
+                        );
+                    })
+                }
                 <Button buttonType="Success" action={this.orderHandler}>BUY</Button>
             </form>
         );

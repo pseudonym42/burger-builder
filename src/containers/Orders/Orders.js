@@ -36,19 +36,25 @@ class Orders extends Component {
     }       
 
     render() {
+
+        let userOrders = <p style={{padding: "50px"}}>You have not made any orders yet</p>;
+        if (this.state.orders.length !== 0) {
+            userOrders = (
+                this.state.orders.map(order => {
+                    return (
+                        <Order
+                            key={order.id} 
+                            ingredients={order.ingredients}
+                            price={order.price}
+                        />
+                    )
+                })
+            );
+        }
+
         return (
             <React.Fragment>
-                {
-                    this.state.orders.map(order => {
-                        return (
-                            <Order
-                                key={order.id} 
-                                ingredients={order.ingredients}
-                                price={order.price}
-                            />
-                        )
-                    })
-                }
+                { userOrders }
             </React.Fragment>
         )
     }

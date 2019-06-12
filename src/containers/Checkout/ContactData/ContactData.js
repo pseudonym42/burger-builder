@@ -16,7 +16,12 @@ class ContactData extends Component {
                     type: 'text',
                     placeholder: 'Your name'
                 },
-                value: ''
+                value: '',
+                validation: {
+                    isRequired: true,
+                    minLength: 3
+                },
+                valid: false
             },
             street: {
                 elementType: 'input',
@@ -24,7 +29,11 @@ class ContactData extends Component {
                     type: 'text',
                     placeholder: 'Your street'
                 },
-                value: ''
+                value: '',
+                validation: {
+                    isRequired: true
+                },
+                valid: false
             },
             postcode: {
                 elementType: 'input',
@@ -32,7 +41,11 @@ class ContactData extends Component {
                     type: 'text',
                     placeholder: 'Your postcode'
                 },
-                value: ''
+                value: '',
+                validation: {
+                    isRequired: true
+                },
+                valid: false
             },
             email: {
                 elementType: 'input',
@@ -40,7 +53,11 @@ class ContactData extends Component {
                     type: 'email',
                     placeholder: 'Your email'
                 },
-                value: ''
+                value: '',
+                validation: {
+                    isRequired: true
+                },
+                valid: false
             },
             deliveryOption: {
                 elementType: 'select',
@@ -50,10 +67,31 @@ class ContactData extends Component {
                         {value: 'standard', displayValue: 'Standard'}
                     ]
                 },
-                value: ''
+                value: 'express',
+                valid: true
             }
         },
         loading: false
+    }
+
+    // validates fields, here rules is the value of
+    // 'validation' key from the state
+    checkValidity(value, rules) {
+        let isFieldValid = false;
+
+        // note that we have additional check everywhere which is
+        // "isFieldValid &&", this allows us to put the validations
+        // in sequence
+
+        if (rules.isRequired) {
+            isFieldValid = isFieldValid && value.trim() !== '';
+        }
+
+        if (rules.minLength) {
+            isFieldValid = isFieldValid && value.length < rules.minLength;
+        }
+
+        return isFieldValid;
     }
 
     orderHandler = (event) => {
@@ -63,13 +101,24 @@ class ContactData extends Component {
         });
 
         /*
+            Get data from the form to submit customer data with
+            the order form
+        */
+
+        const customerData = {};
+        for (let item in this.state.orderForm) {
+            customerData[item] = this.state.orderForm[item].value
+        }
+ 
+        /*
             Note that in real world app you would not submit the price
             from client but rather calculate the price on the server
             so user cannot manipulate it
         */
         const order = {
             ingredients: this.props.ingredients,
-            price: this.props.cost
+            price: this.props.cost,
+            customerData: customerData
         }
 
         /*
@@ -99,21 +148,36 @@ class ContactData extends Component {
             })
     }
 
+    // This function updates state on each change in the input fields i.e.
+    // each keyenter basically
+
     // inputIdentifier below will refer to postcode, email, street etc
     inputChangedHandler = (event, inputIdentifier) => {
-        // note that spread operator does only shallow copy
+        // note that spread operator does only shallow copy, thus nested
+        // objects still refer to the original state object
         const updatedOrderForm = {
             ...this.state.orderForm
         };
 
-        // b'cos above copy is shallow and we need somehow get to value
-        // property of input field in the state object - we need to
-        // copy the specific input field data into another variable,
-        // change its value and then update updatedOrderForm accordingly
+        /*
+            b'cos above copy is shallow and we need somehow get to 'value'
+            property of 'input field' in the state object - we need to
+            copy the specific 'input field' data (depending on the field that is
+            being modified) into another variable, and then change its value
+            and then update updatedOrderForm accordingly
+        */
+
+        // copy part of the updatedOrderForm into a new variable
         const updatedFormElement = {
             ...updatedOrderForm[inputIdentifier]
         };
+
+        // now updated the form with the new value
         updatedFormElement.value = event.target.value;
+        updatedFormElement.valid = this.checkValidity(
+            updatedFormElement.value,
+            updatedFormElement.validation
+        );
         updatedOrderForm[inputIdentifier] = updatedFormElement;
 
         // now we can update the state
@@ -135,7 +199,7 @@ class ContactData extends Component {
         }
 
         let orderForm = (
-            <form>
+            <form onSubmit={this.orderHandler}>
                 {
                     formElementsArray.map((formElement) => {
                         return (
@@ -149,7 +213,7 @@ class ContactData extends Component {
                         );
                     })
                 }
-                <Button buttonType="Success" action={this.orderHandler}>BUY</Button>
+                <Button buttonType="Success">BUY</Button>
             </form>
         );
 

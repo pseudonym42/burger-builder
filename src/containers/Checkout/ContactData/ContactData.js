@@ -21,7 +21,8 @@ class ContactData extends Component {
                     isRequired: true,
                     minLength: 3
                 },
-                valid: false
+                valid: false,
+                touched: false
             },
             street: {
                 elementType: 'input',
@@ -33,7 +34,8 @@ class ContactData extends Component {
                 validation: {
                     isRequired: true
                 },
-                valid: false
+                valid: false,
+                touched: false
             },
             postcode: {
                 elementType: 'input',
@@ -45,7 +47,8 @@ class ContactData extends Component {
                 validation: {
                     isRequired: true
                 },
-                valid: false
+                valid: false,
+                touched: false
             },
             email: {
                 elementType: 'input',
@@ -57,7 +60,8 @@ class ContactData extends Component {
                 validation: {
                     isRequired: true
                 },
-                valid: false
+                valid: false,
+                touched: false
             },
             deliveryOption: {
                 elementType: 'select',
@@ -68,16 +72,19 @@ class ContactData extends Component {
                     ]
                 },
                 value: 'express',
-                valid: true
+                validation: {},
+                valid: true,
+                touched: false
             }
         },
-        loading: false
+        loading: false,
+        formIsValid: false
     }
 
     // validates fields, here rules is the value of
     // 'validation' key from the state
     checkValidity(value, rules) {
-        let isFieldValid = false;
+        let isFieldValid = true;
 
         // note that we have additional check everywhere which is
         // "isFieldValid &&", this allows us to put the validations
@@ -88,7 +95,7 @@ class ContactData extends Component {
         }
 
         if (rules.minLength) {
-            isFieldValid = isFieldValid && value.length < rules.minLength;
+            isFieldValid = isFieldValid && value.length > rules.minLength;
         }
 
         return isFieldValid;
@@ -174,15 +181,24 @@ class ContactData extends Component {
 
         // now updated the form with the new value
         updatedFormElement.value = event.target.value;
+
         updatedFormElement.valid = this.checkValidity(
             updatedFormElement.value,
             updatedFormElement.validation
         );
+
+        updatedFormElement.touched = true;
         updatedOrderForm[inputIdentifier] = updatedFormElement;
+
+        let formIsValid = true;
+        for (let inputIdentifier in updatedOrderForm) {
+            formIsValid = formIsValid && updatedOrderForm[inputIdentifier].valid;
+        }
 
         // now we can update the state
         this.setState({
-            orderForm: updatedOrderForm
+            orderForm: updatedOrderForm,
+            formIsValid: formIsValid
         });
 
     }
@@ -199,22 +215,30 @@ class ContactData extends Component {
         }
 
         let orderForm = (
-            <form onSubmit={this.orderHandler}>
-                {
-                    formElementsArray.map((formElement) => {
-                        return (
-                            <Input
-                                key={formElement.id}
-                                elementType={formElement.config.elementType}
-                                elementConfig={formElement.config.elementConfig}
-                                defaultValue={formElement.config.value}
-                                changed={(event) => this.inputChangedHandler(event, formElement.id)}
-                            />
-                        );
-                    })
-                }
-                <Button buttonType="Success">BUY</Button>
-            </form>
+            <React.Fragment>
+                <h1>Enter your contact data below</h1>
+                <form onSubmit={this.orderHandler}>
+                    {
+                        formElementsArray.map((formElement) => {
+                            return (
+                                <Input
+                                    key={formElement.id}
+                                    elementType={formElement.config.elementType}
+                                    elementConfig={formElement.config.elementConfig}
+                                    defaultValue={formElement.config.value}
+                                    invalid={!formElement.config.valid}
+                                    shouldValidate={formElement.config.validation}
+                                    touched={formElement.config.touched}
+                                    changed={(event) => this.inputChangedHandler(event, formElement.id)}
+                                />
+                            );
+                        })
+                    }
+                    <Button buttonType="Success" disabled={!this.state.formIsValid}>
+                        BUY
+                    </Button>
+                </form>
+            </React.Fragment>
         );
 
         if (this.state.loading) {
@@ -223,7 +247,6 @@ class ContactData extends Component {
 
         return (
             <div className={styles.ContactData}>
-                <h1>Enter your contact data below</h1>
                 {orderForm}
             </div>
         )

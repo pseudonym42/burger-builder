@@ -1,27 +1,20 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+
 import Burger from '../../components/Burger/Burger';
 import BuildControls from '../../components/Burger/BuildControls/BuildControls';
 import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
 import Modal from '../../components/UI/Modal/Modal';
 import Spinner from '../../components/UI/Spinner/Spinner';
 import ErrorHandler from '../../hoc/ErrorHandler/ErrorHandler';
+import * as actionTypes from '../../store/actions';
 
 import axios from '../../axios-orders';
 
 
-const INGREDIENT_PRICES = {
-    salad: 0.5,
-    bacon: 0.7,
-    cheese: 0.4,
-    meat: 1.3    
-}
-
 class BurgerBuilder extends Component {
 
     state = {
-        ingredients: null,
-        totalCost: 4,
-        purchasable: false,
         orderSummaryVisible: false,
         // true when order is POSTed and being processed
         loading: false,
@@ -48,18 +41,18 @@ class BurgerBuilder extends Component {
             of Firebase (this might be an issue with axios though?) have not been
             taken into account here
         */
-        axios.get('/ingredients.json')
-            .then(response => {
-                this.setState({
-                    ingredients: response.data
-                });
-            })
-            .catch(error => {
-                console.log(error);
-                this.setState({
-                    error: true
-                });
-            })
+        // axios.get('/ingredients.json')
+        //     .then(response => {
+        //         this.setState({
+        //             ingredients: response.data
+        //         });
+        //     })
+        //     .catch(error => {
+        //         console.log(error);
+        //         this.setState({
+        //             error: true
+        //         });
+        //     })
     }
 
 
@@ -67,65 +60,11 @@ class BurgerBuilder extends Component {
     Methods
     *************************************************/
 
-    updatePurchaseState(ingredients) {
+    getPurchasableStatus(ingredients) {
         const sum = Object.values(ingredients).reduce((total, currentValue) => {
             return total + currentValue
         }, 0);
-
-        this.setState({
-            purchasable: sum > 0
-        })
-    }
-
-    addIngredients = (type) => {
-        const oldCount = this.state.ingredients[type];
-        const updatedCount = oldCount + 1;
-        const updatedIngredients = {
-            ...this.state.ingredients
-        }
-        updatedIngredients[type] = updatedCount;
-
-        const ingredientPrice = INGREDIENT_PRICES[type];
-        const updatedTotalCost = this.state.totalCost + ingredientPrice;
-
-        this.setState({
-            ingredients: updatedIngredients,
-            totalCost: updatedTotalCost
-        })
-
-        // because setState is async: we have to pass updatedIngredients to
-        // the following updatePurchaseState function directly, otherwise in
-        // updatePurchaseState we'd have to access the state directly which
-        // will be stale at that moment as the above setState gets queued and
-        // doe not run immidiately
-        this.updatePurchaseState(updatedIngredients);
-    }
-
-    removeIngredients = (type) => {
-
-        const oldCount = this.state.ingredients[type];
-
-        if (oldCount > 0) {
-            const updatedCount = oldCount - 1;
-            const updatedIngredients = {
-                ...this.state.ingredients
-            }
-            updatedIngredients[type] = updatedCount;
-    
-            const ingredientPrice = INGREDIENT_PRICES[type];
-            const updatedTotalCost = this.state.totalCost - ingredientPrice;
-            
-            this.setState({
-                ingredients: updatedIngredients,
-                totalCost: updatedTotalCost
-            })
-            // because setState is async: we have to pass updatedIngredients to
-            // the following updatePurchaseState function directly, otherwise in
-            // updatePurchaseState we'd have to access the state directly which
-            // will be stale at that moment as the above setState gets queued and
-            // doe not run immidiately
-            this.updatePurchaseState(updatedIngredients);
-        }
+        return sum > 0;
     }
 
     displayOrderSummary = () => {
@@ -142,26 +81,13 @@ class BurgerBuilder extends Component {
     }
 
     buyBurger = () => {
-        
-        const queryParams = [];
-        for (let [ingr, price] of Object.entries(this.state.ingredients)) {
-            queryParams.push(
-                `${encodeURIComponent(ingr)}=${encodeURIComponent(price)}`
-            );
-        }
-
-        queryParams.push(`totalCost=${this.state.totalCost}`);
-
-        this.props.history.push({
-            pathname: '/checkout',
-            search: '?' + queryParams.join('&')
-        });
+        this.props.history.push('/checkout');
     }
 
     render () {
 
         const disabledInfo = {
-            ...this.state.ingredients
+            ...this.props.ings
         }
 
         for (let item in disabledInfo) {
@@ -178,32 +104,32 @@ class BurgerBuilder extends Component {
                    need to display the Spinner
         */
         let orderSummaryContent;
-        if (this.state.loading || !this.state.ingredients) {
+        if (this.state.loading || !this.props.ings) {
             orderSummaryContent = <Spinner />;
         } else {
             orderSummaryContent = (
                 <OrderSummary
-                    ingredients={this.state.ingredients}
+                    ingredients={this.props.ings}
                     returnToBurgerBuilder={this.returnToBurgerBuilder}
                     buyBurger={this.buyBurger}
-                    totalCost={this.state.totalCost}
+                    totalCost={this.props.totalCost}
                 />
             );            
         }
 
         // set burger display and controls
         let burger = this.state.error ? <p>Error: Ingredients cannot be displayed!</p> : <Spinner />;
-        if (this.state.ingredients) {
+        if (this.props.ings) {
             burger = (
                 <React.Fragment>
-                    <Burger ingredients={this.state.ingredients}/>
+                    <Burger ingredients={this.props.ings}/>
                     <div>
                         <BuildControls
-                            addIngredients={this.addIngredients}
-                            removeIngredients={this.removeIngredients}
+                            addIngredients={this.props.onIngredientAdded}
+                            removeIngredients={this.props.onIngredientRemoved}
                             disabledInfo={disabledInfo}
-                            totalCost={this.state.totalCost}
-                            purchasable={this.state.purchasable}
+                            totalCost={this.props.totalCost}
+                            purchasable={this.getPurchasableStatus(this.props.ings)}
                             displayOrderSummary={this.displayOrderSummary}
                         />
                     </div>
@@ -225,4 +151,27 @@ class BurgerBuilder extends Component {
     }
 }
 
-export default ErrorHandler(BurgerBuilder, axios);
+
+// convert redux store state into props for this component
+const mapStateToProps = (state) => {
+    return {
+        ings: state.ingredients,
+        totalCost: state.totalCost
+    };
+};
+
+// now convert functions into ptops for this component
+const mapDispatchToProps = (dispatch) => {
+    return {
+        onIngredientAdded: (ingredientName) => dispatch({
+            type: actionTypes.ADD_INGREDIENT,
+            ingredientName: ingredientName
+        }),
+        onIngredientRemoved: (ingredientName) => dispatch({
+            type: actionTypes.REMOVE_INGREDIENT,
+            ingredientName: ingredientName
+        })
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ErrorHandler(BurgerBuilder, axios));

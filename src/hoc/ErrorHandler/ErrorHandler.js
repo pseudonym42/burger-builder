@@ -99,6 +99,10 @@ const errorHandler = (WrappedComponent, axios) => {
                             >
                                 {errorMessage}
                             </Modal>
+                        {/*
+                            below we pass all of the props as this HOC could 
+                            itself be wrapped by another HOC
+                        */}
                         <WrappedComponent {...this.props}/>
                     </React.Fragment>
                 );

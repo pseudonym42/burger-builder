@@ -12,11 +12,15 @@ Tech stack:
 
 - React DOM 16.8
 
+- React Redux 7.1
+
 - React Scripts 3.0
 
 - PropTypes 15.7
 
-- Axios 0.18
+- Axios 0.19
+
+- Redux Thunk 2.3
 
 - Google Firebase
 

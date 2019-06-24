@@ -7,58 +7,21 @@ import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
 import Modal from '../../components/UI/Modal/Modal';
 import Spinner from '../../components/UI/Spinner/Spinner';
 import ErrorHandler from '../../hoc/ErrorHandler/ErrorHandler';
-import * as actionTypes from '../../store/actions';
+import * as burgerBuilderActions from '../../store/actions/index';
 
 import axios from '../../axios-orders';
+
 
 
 class BurgerBuilder extends Component {
 
     state = {
-        orderSummaryVisible: false,
-        // true when order is POSTed and being processed
-        loading: false,
-        /*
-            this is additional error flag in addition to ErrorHandler
-            status, which covers componentDidMount related scenario when
-            error happens while fetching ingredients
-        */
-        error: false
+        orderSummaryVisible: false
     }
-
-    /************************************************
-    Life Cycle Hooks
-    *************************************************/
 
     componentDidMount() {
-        /*
-            Note that if you'd like to test the catch error functionality
-            you might change URL to '/ingredients' this will reject the 
-            promise thus triggering the .catch section of the code
-
-            However, the Firebase backend will still return 200 OK response
-            if you change URL to '/random.json', keep this mind. This behaviour
-            of Firebase (this might be an issue with axios though?) have not been
-            taken into account here
-        */
-        // axios.get('/ingredients.json')
-        //     .then(response => {
-        //         this.setState({
-        //             ingredients: response.data
-        //         });
-        //     })
-        //     .catch(error => {
-        //         console.log(error);
-        //         this.setState({
-        //             error: true
-        //         });
-        //     })
+        this.props.onInitIngredients();
     }
-
-
-    /************************************************
-    Methods
-    *************************************************/
 
     getPurchasableStatus(ingredients) {
         const sum = Object.values(ingredients).reduce((total, currentValue) => {
@@ -104,7 +67,7 @@ class BurgerBuilder extends Component {
                    need to display the Spinner
         */
         let orderSummaryContent;
-        if (this.state.loading || !this.props.ings) {
+        if (!this.props.ings) {
             orderSummaryContent = <Spinner />;
         } else {
             orderSummaryContent = (
@@ -118,7 +81,7 @@ class BurgerBuilder extends Component {
         }
 
         // set burger display and controls
-        let burger = this.state.error ? <p>Error: Ingredients cannot be displayed!</p> : <Spinner />;
+        let burger = this.props.error ? <p>Error: Ingredients cannot be displayed!</p> : <Spinner />;
         if (this.props.ings) {
             burger = (
                 <React.Fragment>
@@ -156,21 +119,28 @@ class BurgerBuilder extends Component {
 const mapStateToProps = (state) => {
     return {
         ings: state.ingredients,
-        totalCost: state.totalCost
+        totalCost: state.totalCost,
+        error: state.error
     };
 };
 
-// now convert functions into ptops for this component
+/* 
+    now convert functions into props for this component i.e.
+    this component wil have a prop e.g. <onIngredientAdded>
+    which could be used as <this.props.onIngredientAdded> to 
+    trigger the below corresponding function
+*/
 const mapDispatchToProps = (dispatch) => {
     return {
-        onIngredientAdded: (ingredientName) => dispatch({
-            type: actionTypes.ADD_INGREDIENT,
-            ingredientName: ingredientName
-        }),
-        onIngredientRemoved: (ingredientName) => dispatch({
-            type: actionTypes.REMOVE_INGREDIENT,
-            ingredientName: ingredientName
-        })
+        onIngredientAdded: (ingredientName) => dispatch(
+            burgerBuilderActions.addIngredient(ingredientName)
+        ),
+        onIngredientRemoved: (ingredientName) => dispatch(
+            burgerBuilderActions.removeIngredient(ingredientName)
+        ),
+        onInitIngredients: () => dispatch(
+            burgerBuilderActions.initIngredients()
+        )
     };
 };
 

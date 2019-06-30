@@ -8,6 +8,12 @@ const navigationItems = (props) => {
         <ul className={styles.NavigationItems}>
 
             <NavigationItem
+                link="/auth"
+            >
+                Authenticate
+            </NavigationItem>
+
+            <NavigationItem
                 link="/"
             >
                 Burger Builder

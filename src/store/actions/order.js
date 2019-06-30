@@ -9,7 +9,7 @@ import axios from '../../axios-orders';
 */
 
 /*
-    sync action type creators
+    sync action type creators for making an order
 */
 
 export const purchaseBurgerSuccess = (id, orderData) => {
@@ -39,8 +39,34 @@ export const purchaseInit = () => {
     }
 }
 
+/*
+    sync action type creators for fetching 'my' orders
+*/
+
+export const fetchOrdersSuccess = (orders) => {
+    return {
+        type: actionTypes.FETCH_ORDERS_SUCCESS,
+        orders: orders
+    }
+}
+
+export const fetchOrdersFail = (error) => {
+    return {
+        type: actionTypes.FETCH_ORDERS_FAIL,
+        error: error
+    }
+}
+
+export const fetchOrdersStart = () => {
+    return {
+        type: actionTypes.FETCH_ORDERS_START
+    }
+}
+
+
+
 /* 
-    async action type creators
+    async action type creators for making an order
 */
 export const purchaseBurger = (orderData) => {
     return dispatch => {
@@ -64,6 +90,40 @@ export const purchaseBurger = (orderData) => {
             .catch(error => {
                 console.log("ERROR: could not place the order!")
                 dispatch(purchaseBurgerFail(error));
+            })
+
+    };
+}
+
+
+
+/* 
+    async action type creators for fetching 'my' orders
+*/
+export const fetchOrders = () => {
+    return dispatch => {
+        /*
+            we are using Firebase, so we did not create an API endpoint
+            to handle our requests
+        */
+        dispatch(fetchOrdersStart());
+        axios.get('/orders.json')
+            .then((response) => {
+                const fetchedOrders = [];
+                for (let order_key in response.data) {
+                    fetchedOrders.push({
+                        ...response.data[order_key],
+                        id: order_key
+                    });
+                }
+                dispatch(
+                    fetchOrdersSuccess(fetchedOrders)
+                );
+            })
+            .catch(error => {
+                dispatch(
+                    fetchOrdersFail(error)
+                );
             })
 
     };

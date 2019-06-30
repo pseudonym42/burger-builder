@@ -56,6 +56,13 @@ const input = (props) => {
     let validationError = null;
     if (props.invalid && props.touched) {
         validationError = <p className={styles.ValidationError}>Please enter a valid value!</p>;
+        if (props.elementConfig.type === 'password') {
+            validationError = (
+                <p className={styles.ValidationError}>
+                    Passoword must be 8 characters minimum!
+                </p>
+            )
+        }
     }
 
     return (

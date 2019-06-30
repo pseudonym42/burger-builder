@@ -1,4 +1,5 @@
 import * as actionTypes from '../actions/actionTypes';
+import { updateObject } from '../utility';
 
 
 const INGREDIENT_PRICES = {
@@ -15,6 +16,44 @@ const initialState = {
     error: false
 };
 
+const _processAddIngredient = (state, action) => {
+    let postAddCost = state.totalCost + INGREDIENT_PRICES[action.ingredientName];
+    postAddCost = parseFloat(postAddCost.toFixed(2));
+
+    const postAddIngredients = updateObject(
+        state.ingredients,
+        {
+            [action.ingredientName]: state.ingredients[action.ingredientName] + 1
+        }
+    );
+
+    const postAddState = {
+        ingredients: postAddIngredients,
+        totalCost: postAddCost
+    }
+
+    return updateObject(state, postAddState);
+}
+
+const _processRemoveIngredient = (state, action) => {
+    let postRemoveCost = state.totalCost - INGREDIENT_PRICES[action.ingredientName];
+    postRemoveCost = parseFloat(postRemoveCost.toFixed(2));
+
+    const postRemoveIngredients = updateObject(
+        state.ingredients,
+        {
+            [action.ingredientName]: state.ingredients[action.ingredientName] - 1
+        }
+    );
+
+    const postRemoveState = {
+        ingredients: postRemoveIngredients,
+        totalCost: postRemoveCost
+    }
+
+    return  updateObject(state, postRemoveState);
+}
+
 const reducer = (state=initialState, action) => {
     /*
         Note that this reducer re-calculates burger price each
@@ -22,39 +61,9 @@ const reducer = (state=initialState, action) => {
     */
     switch (action.type) {
         case actionTypes.ADD_INGREDIENT:
-            let postAddCost = state.totalCost + INGREDIENT_PRICES[action.ingredientName];
-            postAddCost = parseFloat(postAddCost.toFixed(2));
-            return  {
-                ...state,
-                /* 
-                    we have to spread nested objects as well as by
-                    default spread os state (i.e. <...state>) does
-                    only shallow copying
-                */
-                ingredients: {
-                    ...state.ingredients,
-                    // now override existing value with new one:
-                    [action.ingredientName]: state.ingredients[action.ingredientName] + 1
-                },
-                totalCost: postAddCost
-            }
+            return _processAddIngredient(state, action);
         case actionTypes.REMOVE_INGREDIENT:
-            let postRemoveCost = state.totalCost - INGREDIENT_PRICES[action.ingredientName];
-            postRemoveCost = parseFloat(postRemoveCost.toFixed(2));
-            return {
-                ...state,
-                /* 
-                    we have to spread nested objects as well as by
-                    default spread os state (i.e. <...state>) does
-                    only shallow copying
-                */
-                ingredients: {
-                    ...state.ingredients,
-                    // now override existing value with new one:
-                    [action.ingredientName]: state.ingredients[action.ingredientName] - 1
-                },
-                totalCost: postRemoveCost
-            }
+            return _processRemoveIngredient(state, action);
         case actionTypes.SET_INGREDIENTS:
             return {
                 ...state,

@@ -7,7 +7,7 @@ import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
 import Modal from '../../components/UI/Modal/Modal';
 import Spinner from '../../components/UI/Spinner/Spinner';
 import ErrorHandler from '../../hoc/ErrorHandler/ErrorHandler';
-import * as burgerBuilderActions from '../../store/actions/index';
+import * as actions from '../../store/actions/index';
 
 import axios from '../../axios-orders';
 
@@ -44,6 +44,7 @@ class BurgerBuilder extends Component {
     }
 
     buyBurger = () => {
+        this.props.onInitPurchase();
         this.props.history.push('/checkout');
     }
 
@@ -118,9 +119,9 @@ class BurgerBuilder extends Component {
 // convert redux store state into props for this component
 const mapStateToProps = (state) => {
     return {
-        ings: state.ingredients,
-        totalCost: state.totalCost,
-        error: state.error
+        ings: state.bg.ingredients,
+        totalCost: state.bg.totalCost,
+        error: state.bg.error
     };
 };
 
@@ -133,14 +134,17 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         onIngredientAdded: (ingredientName) => dispatch(
-            burgerBuilderActions.addIngredient(ingredientName)
+            actions.addIngredient(ingredientName)
         ),
         onIngredientRemoved: (ingredientName) => dispatch(
-            burgerBuilderActions.removeIngredient(ingredientName)
+            actions.removeIngredient(ingredientName)
         ),
         onInitIngredients: () => dispatch(
-            burgerBuilderActions.initIngredients()
-        )
+            actions.initIngredients()
+        ),
+        onInitPurchase: () => dispatch(
+            actions.purchaseInit()
+        )        
     };
 };
 

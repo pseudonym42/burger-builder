@@ -5,6 +5,8 @@ import Button from '../../../components/UI/Button/Button';
 import Input from '../../../components/UI/Input/Input';
 import Spinner from '../../../components/UI/Spinner/Spinner';
 import styles from './ContactData.module.css';
+import ErrorHandler from '../../../hoc/ErrorHandler/ErrorHandler';
+import * as contactDataActions from '../../../store/actions/index';
 
 import axios from '../../../axios-orders';
 
@@ -80,7 +82,6 @@ class ContactData extends Component {
                 touched: false
             }
         },
-        loading: false,
         formIsValid: false
     }
 
@@ -106,9 +107,6 @@ class ContactData extends Component {
 
     orderHandler = (event) => {
         event.preventDefault();
-        this.setState({
-            loading: true
-        });
 
         /*
             Get data from the form to submit customer data with
@@ -131,31 +129,8 @@ class ContactData extends Component {
             customerData: customerData
         }
 
-        /*
-            we are using Firebase, so we did not create an API endpoint
-            to handle our requests. But they will get created magically,
-            for this to work we need to specify a namespace where all
-            key-value pairs will be created like this:
-                
-                /<namespace>.json
+        this.props.onOrderBurger(order);
 
-            Note that below path will be appended to the baseURL to send
-            the post request
-        */
-        axios.post("/orders.json", order)
-            .then(response => {
-                console.log("Order placed!");
-                this.setState({
-                    loading: false
-                });
-                this.props.history.push('/');
-            })
-            .catch(error => {
-                console.log("ERROR: could not place the order!")
-                this.setState({
-                    loading: false
-                });
-            })
     }
 
     // This function updates state on each change in the input fields i.e.
@@ -244,7 +219,7 @@ class ContactData extends Component {
             </React.Fragment>
         );
 
-        if (this.state.loading) {
+        if (this.props.loading) {
             orderForm = <Spinner />;
         }
 
@@ -261,9 +236,19 @@ class ContactData extends Component {
 // convert redux store state into props for this component
 const mapStateToProps = (state) => {
     return {
-        ings: state.ingredients,
-        totalCost: state.totalCost
+        ings: state.bg.ingredients,
+        totalCost: state.bg.totalCost,
+        loading: state.order.loading
     };
 };
 
-export default connect(mapStateToProps)(ContactData);
+const mapDispatchToProps = (dispatch) => {
+    return {
+        onOrderBurger: (orderData) => dispatch(
+            contactDataActions.purchaseBurger(orderData)
+        )
+    };
+};
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(ErrorHandler(ContactData, axios));

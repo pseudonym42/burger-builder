@@ -32,7 +32,6 @@ export const removeIngredient = (ingredientName) => {
     }
 };
 
-// react-thunk allows to have async action creators
 export const fetchIngredientsFailed = () => {
     return {
         type: actionTypes.FETCH_INGREDIENTS_FAILED
@@ -46,6 +45,7 @@ export const setIngredients = (ingredients) => {
     }
 }
 
+// react-thunk allows to have async action creators
 export const initIngredients = () => {
     return (
         (dispatch) => {

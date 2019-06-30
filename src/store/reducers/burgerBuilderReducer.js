@@ -22,6 +22,8 @@ const reducer = (state=initialState, action) => {
     */
     switch (action.type) {
         case actionTypes.ADD_INGREDIENT:
+            let postAddCost = state.totalCost + INGREDIENT_PRICES[action.ingredientName];
+            postAddCost = parseFloat(postAddCost.toFixed(2));
             return  {
                 ...state,
                 /* 
@@ -34,9 +36,11 @@ const reducer = (state=initialState, action) => {
                     // now override existing value with new one:
                     [action.ingredientName]: state.ingredients[action.ingredientName] + 1
                 },
-                totalCost: state.totalCost + INGREDIENT_PRICES[action.ingredientName]
+                totalCost: postAddCost
             }
         case actionTypes.REMOVE_INGREDIENT:
+            let postRemoveCost = state.totalCost - INGREDIENT_PRICES[action.ingredientName];
+            postRemoveCost = parseFloat(postRemoveCost.toFixed(2));
             return {
                 ...state,
                 /* 
@@ -49,13 +53,14 @@ const reducer = (state=initialState, action) => {
                     // now override existing value with new one:
                     [action.ingredientName]: state.ingredients[action.ingredientName] - 1
                 },
-                totalCost: state.totalCost - INGREDIENT_PRICES[action.ingredientName]
+                totalCost: postRemoveCost
             }
         case actionTypes.SET_INGREDIENTS:
             return {
                 ...state,
                 ingredients: action.ingredients,
-                error: false
+                error: false,
+                totalCost: 4
             }
         case actionTypes.FETCH_INGREDIENTS_FAILED:
             return {

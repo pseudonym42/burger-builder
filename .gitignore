@@ -25,3 +25,10 @@ yarn-error.log*
 
 # others
 .vscode
+
+
+# deployment
+firebase-debug.log
+firebase.json
+.firebase
+.firebaserc

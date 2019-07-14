@@ -39,6 +39,9 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 The page will reload if you make edits
 You will also see any lint errors in the console.
 
+Note that to run this application locally you will need to setup your own firebase backend
+and setup your Google API Key in /src/store/actions/auth.js
+
 ### `npm test`
 
 Launches the test runner in the interactive watch mode.<br>

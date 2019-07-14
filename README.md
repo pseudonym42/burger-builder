@@ -2,7 +2,7 @@
 
 This is a mobile first application for building and ordering a burger.
 
-![picture](demo/demo_screen.png)
+Deployed on Google Firebase: https://burger-builder-project-id.firebaseapp.com/
 
 Bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 

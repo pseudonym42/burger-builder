@@ -11,15 +11,19 @@ import './index.css';
 import App from './App';
 import burgerBuilderReducer from './store/reducers/burgerBuilderReducer';
 import orderReducer from './store/reducers/orderReducer';
+import authReducer from './store/reducers/authReducer';
 
+
+const devEnvironment = process.env.NODE_ENV === "development" ? true : false
 
 // composeEnhancers allows to use redux devtools extension
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const composeEnhancers = devEnvironment ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : null || compose;
 
 // combine reducers
 const rootReducer = combineReducers({
     bg: burgerBuilderReducer,
-    order: orderReducer
+    order: orderReducer,
+    auth: authReducer
 });
 
 // Note that we added thunk middleware to be able to dispatch 

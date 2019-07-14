@@ -15,8 +15,9 @@ import axios from '../../axios-orders';
     to reducer until async logic is completed
 */
 
-// This module contains action creators related 
-// to burger building
+/*
+    sync action type creators for burger building
+*/
 
 export const addIngredient = (ingredientName) => {
     return {
@@ -45,7 +46,12 @@ export const setIngredients = (ingredients) => {
     }
 }
 
-// react-thunk allows to have async action creators
+
+
+/* 
+    async action type creators for making an order
+*/
+
 export const initIngredients = () => {
     return (
         (dispatch) => {

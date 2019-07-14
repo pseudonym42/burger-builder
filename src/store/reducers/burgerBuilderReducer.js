@@ -13,7 +13,15 @@ const INGREDIENT_PRICES = {
 const initialState = {
     ingredients: null,
     totalCost: 4,
-    error: false
+    error: false,
+    /*
+        'building' flag indicates whether user already started to add/remove ingredients
+        to a burger, this is useful when redirecting the user after authentication i.e.
+        if user just authenticated then value of 'building' is false and user is redirected
+        to the burger building page. But if user started to build a burger and then had to
+        authenticate to checkout then the user is redirected to checkout page after authentication
+    */
+    building: false
 };
 
 const _processAddIngredient = (state, action) => {
@@ -29,7 +37,8 @@ const _processAddIngredient = (state, action) => {
 
     const postAddState = {
         ingredients: postAddIngredients,
-        totalCost: postAddCost
+        totalCost: postAddCost,
+        building: true
     }
 
     return updateObject(state, postAddState);
@@ -48,7 +57,8 @@ const _processRemoveIngredient = (state, action) => {
 
     const postRemoveState = {
         ingredients: postRemoveIngredients,
-        totalCost: postRemoveCost
+        totalCost: postRemoveCost,
+        building: true
     }
 
     return  updateObject(state, postRemoveState);
@@ -69,6 +79,7 @@ const reducer = (state=initialState, action) => {
                 ...state,
                 ingredients: action.ingredients,
                 error: false,
+                building: false,
                 totalCost: 4
             }
         case actionTypes.FETCH_INGREDIENTS_FAILED:

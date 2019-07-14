@@ -59,7 +59,7 @@ const input = (props) => {
         if (props.elementConfig.type === 'password') {
             validationError = (
                 <p className={styles.ValidationError}>
-                    Passoword must be 8 characters minimum!
+                    Passoword must be 6 characters minimum!
                 </p>
             )
         }

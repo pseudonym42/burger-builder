@@ -22,6 +22,8 @@ Tech stack:
 
 - Redux Thunk 2.3
 
+- Enzyme 3.10
+
 - Google Firebase
 
 
@@ -42,8 +44,33 @@ You will also see any lint errors in the console.
 Launches the test runner in the interactive watch mode.<br>
 See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
+In case you get <System limit for number of file watchers reached> run the following
+commands, which will temporarily increase the limit of inotify watchers:
+
+sudo sysctl fs.inotify.max_user_watches=524288
+sudo sysctl -p
+
 
 ## Implementation details
+
+The application has a relatevely standard structure: it is split into a number of reusable web components, most
+of which are stateless, and the application state is managed by shared store where components could exchange
+data. The shared store is namespaced inside. Some components store local state as well.
+
+The popular Redux library is used to store the application global state.
+
+Axios is used for communication with Firabase server and for post/pre request/response processing.
+
+Actions are dispatched to reducers via action creators concept: action creators are functions which are
+used to dispatch actions and are used for encapsulation, abstraction and consistency.
+
+Redux thunk library is used to provide async action creators functionality, without it otherwise the 
+dispatched actions are processed synchronously
+
+Higher order components are used to wrap some of the components, for example ErrorHandler is used to
+provide error handling functionality, asyncComponent is used to load some modules asynchronously
+
+
 
 ### Components vs containers folders
 

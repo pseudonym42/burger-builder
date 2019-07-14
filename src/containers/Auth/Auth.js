@@ -1,9 +1,14 @@
 import React, {Component} from 'react';
+import { connect } from 'react-redux';
+import { Redirect } from 'react-router-dom';
+
 import styles from './Auth.module.css';
 
 import Input from '../../components/UI/Input/Input';
 import Button from '../../components/UI/Button/Button';
+import Spinner from '../../components/UI/Spinner/Spinner';
 
+import * as actions from '../../store/actions/index';
 
 
 class Auth extends Component {
@@ -33,12 +38,28 @@ class Auth extends Component {
                 value: '',
                 validation: {
                     isRequired: true,
-                    minLength: 8
+                    minLength: 5
                 },
                 valid: false,
                 touched: false
             }
         },
+        isSignup: true
+    }
+
+    componentDidMount() {
+
+        /*
+            if user is trying to authenticate when not building
+            a burger then we need to reset redirection path to 
+            default root path i.e. '/' before authentication is
+            handled. This is to prevent cases where we might end
+            up redirecting user to '/checkout' when user is not
+            building a burger
+        */
+        if (!this.props.buildingBurger && this.props.authRedirect !== '/') {
+            this.props.resetAuthRedirectPath();
+        }
     }
 
     // validates fields, here rules is the value of
@@ -84,6 +105,24 @@ class Auth extends Component {
         });
     }
 
+    submitHandler = (event) => {
+        event.preventDefault(); // to prevent page reload
+
+        this.props.onAuth(
+            this.state.controls.email.value,
+            this.state.controls.password.value,
+            this.state.isSignup
+        )
+    }
+
+    switchAuthMode = () => {
+        this.setState(prevState => {
+            return {
+                isSignup: !prevState.isSignup
+            }
+        });
+    }
+
     render() {
 
         // generate form fields
@@ -95,7 +134,7 @@ class Auth extends Component {
             });
         }
 
-        const form = formElementsArray.map(formElement => {
+        let form = formElementsArray.map(formElement => {
             return (
                 <Input
                     key={formElement.id}
@@ -110,17 +149,74 @@ class Auth extends Component {
             );
         })
 
+        const authMode = this.state.isSignup ? "Already registered?" : "Register",
+              authButtonTitle = this.state.isSignup ? "Sign Up" : "Log In";
+
+        if (this.props.loading) {
+            form = <Spinner />;
+        }
+
+        let errorMessage = null;
+        if (this.props.error) {
+            errorMessage = (
+                <p>
+                    {this.props.error.message}
+                </p>
+            );
+        }
+
+        let authRedirect = null;
+        if (this.props.isAuthenticated) {
+            authRedirect = <Redirect to={this.props.authRedirect} />
+        }
+
         return (
             <div className={styles.Auth}>
-                <form>
+                { authRedirect }
+                { errorMessage }
+                <form onSubmit={this.submitHandler}>
                     {form}
                     <Button buttonType="Success">
-                        SUBMIT
+                        { authButtonTitle }
                     </Button>
                 </form>
+                <Button buttonType="Danger" action={this.switchAuthMode}>
+                    { authMode }
+                </Button>
             </div>
         );
     }
 }
 
-export default Auth;
+
+// convert redux store state into props for this component
+const mapStateToProps = state => {
+    return {
+        loading: state.auth.loading,
+        error: state.auth.error,
+        isAuthenticated: state.auth.token !== null,
+        buildingBurger: state.bg.building,
+        authRedirect: state.auth.authRedirectPath
+    };
+};
+
+
+/* 
+    now convert functions into props for this component i.e.
+    this component wil have a prop e.g. <onAuth> which could
+    be used as <this.props.onAuth> to  trigger the below
+    corresponding function
+*/
+const mapDispatchToProps = dispatch => {
+    return {
+        onAuth: (email, password, isSignup) => dispatch(
+            actions.auth(email, password, isSignup)
+        ),
+        resetAuthRedirectPath: () => dispatch(
+            actions.setAuthRedirectPath("/")
+        )
+    };
+};
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(Auth);

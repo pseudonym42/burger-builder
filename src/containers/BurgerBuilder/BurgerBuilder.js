@@ -12,8 +12,8 @@ import * as actions from '../../store/actions/index';
 import axios from '../../axios-orders';
 
 
-
-class BurgerBuilder extends Component {
+// export is added here to allow unit testing of the component
+export class BurgerBuilder extends Component {
 
     state = {
         orderSummaryVisible: false
@@ -31,10 +31,14 @@ class BurgerBuilder extends Component {
     }
 
     displayOrderSummary = () => {
-        this.setState({
-            // orderSummaryVisible: !this.state.orderSummaryVisible
-            orderSummaryVisible: true
-        })
+        if (this.props.isAuthenticated) {
+            this.setState({
+                orderSummaryVisible: true
+            })
+        } else {
+            this.props.onSetAuthRedirectPath('/checkout');
+            this.props.history.push('/auth');
+        }
     }
 
     returnToBurgerBuilder = () => {
@@ -95,6 +99,7 @@ class BurgerBuilder extends Component {
                             totalCost={this.props.totalCost}
                             purchasable={this.getPurchasableStatus(this.props.ings)}
                             displayOrderSummary={this.displayOrderSummary}
+                            isAuth={this.props.isAuthenticated}
                         />
                     </div>
                 </React.Fragment>
@@ -121,7 +126,8 @@ const mapStateToProps = (state) => {
     return {
         ings: state.bg.ingredients,
         totalCost: state.bg.totalCost,
-        error: state.bg.error
+        error: state.bg.error,
+        isAuthenticated: state.auth.token !== null
     };
 };
 
@@ -144,7 +150,10 @@ const mapDispatchToProps = (dispatch) => {
         ),
         onInitPurchase: () => dispatch(
             actions.purchaseInit()
-        )        
+        ),
+        onSetAuthRedirectPath: (path) => dispatch(
+            actions.setAuthRedirectPath(path)
+        )
     };
 };
 

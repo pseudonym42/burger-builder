@@ -25,7 +25,12 @@ const sideDrawer = (props) => {
         <React.Fragment>
             {/* Note that passing <show> with no value sets it to true */}
             <Backdrop show={showBackdrop} onClickFunction={props.sideDrawerClosedHandler} />
-            <div className={attachedClasses.join(' ')}>
+
+            {/*
+                below onClick is to hide the SideDrawer whenever it is clicked or
+                any link within SideDrawer is clicked
+            */}
+            <div className={attachedClasses.join(' ')} onClick={props.sideDrawerClosedHandler}>
                 {/*
                     Note that this div wrapping Logo component is used
                     purely to change the Logo size
@@ -39,7 +44,7 @@ const sideDrawer = (props) => {
                     <Logo />
                 </div>
                 <nav>
-                    <NavigationItems />
+                    <NavigationItems isAuthenticated={props.isAuth}/>
                 </nav>
             </div>
         </React.Fragment>

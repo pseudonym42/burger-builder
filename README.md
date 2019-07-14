@@ -1,4 +1,4 @@
-## Burger Builder App
+# Burger Builder App
 
 This is a mobile first application for building and ordering a burger.
 
@@ -27,11 +27,11 @@ Tech stack:
 - Google Firebase
 
 
-## Available Scripts
+# Available Scripts
 
 In the project directory, you can run:
 
-### `npm start`
+## npm start
 
 Runs the app in the development mode
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
@@ -42,7 +42,7 @@ You will also see any lint errors in the console.
 Note that to run this application locally you will need to setup your own firebase backend
 and setup your Google API Key in /src/store/actions/auth.js
 
-### `npm test`
+## npm test
 
 Launches the test runner in the interactive watch mode.<br>
 See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
@@ -50,11 +50,11 @@ See the section about [running tests](https://facebook.github.io/create-react-ap
 In case you get <System limit for number of file watchers reached> run the following
 commands, which will temporarily increase the limit of inotify watchers:
 
-sudo sysctl fs.inotify.max_user_watches=524288
-sudo sysctl -p
+- sudo sysctl fs.inotify.max_user_watches=524288
+- sudo sysctl -p
 
 
-## Implementation details
+# Implementation details
 
 The application has a relatevely standard structure: it is split into a number of reusable web components, most
 of which are stateless, and the application state is managed by shared store where components could exchange
@@ -75,7 +75,7 @@ provide error handling functionality, asyncComponent is used to load some module
 
 
 
-### Components vs containers folders
+## Components vs containers folders
 
-Components folder contains stateless components
-Containers folder contains stateful components
+- Components folder contains stateless components
+- Containers folder contains stateful components

@@ -13,8 +13,11 @@ import burgerBuilderReducer from './store/reducers/burgerBuilderReducer';
 import orderReducer from './store/reducers/orderReducer';
 import authReducer from './store/reducers/authReducer';
 
-// uncomment for development environment
+
 // const devEnvironment = process.env.NODE_ENV === "development" ? true : false
+
+// set to True for development environment
+const devEnvironment = false;
 
 // composeEnhancers allows to use redux devtools extension
 const composeEnhancers = devEnvironment ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : null || compose;

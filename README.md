@@ -14,7 +14,7 @@ Tech stack:
 
 - React Redux 7.1
 
-- React Scripts 3.0
+- React Scripts 3.3
 
 - PropTypes 15.7
 
@@ -30,6 +30,14 @@ Tech stack:
 # Available Scripts
 
 In the project directory, you can run:
+
+## npm install
+
+Installs all the required dependencies in the local `node_modules` folder
+
+## npm run build
+
+Creates an optimized production build in the local `build` folder
 
 ## npm start
 

@@ -107,7 +107,7 @@ export const auth = (email, password, isSignup) => {
             returnSecureToken: true
         }
         
-        let key = '',
+        let key = 'AIzaSyCPxAQCU7QcfUyb1qh6w5DxUVsS19VN6b0',
             baseUrl = 'https://www.googleapis.com/identitytoolkit/v3/relyingparty',
             url = `${baseUrl}/signupNewUser?key=${key}`;
 

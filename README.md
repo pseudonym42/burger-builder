@@ -1,8 +1,17 @@
-# Burger Builder App
+# Burger Builder App :hamburger:
+
+---
 
 This is a mobile first application for building and ordering a burger.
 
-Deployed on Google Firebase: https://burger-builder-project-id.firebaseapp.com/
+Which looks like this :arrow_heading_down:
+
+
+![Scheme](https://bitbucket.org/elnurcoot/burger-builder-app-react/downloads/burger-builder-screenshot.png)
+
+---
+
+Deployed on Google Firebase: [Build Yor Burger Here!](https://burger-builder-project-id.firebaseapp.com/)
 
 Bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
@@ -31,15 +40,15 @@ Tech stack:
 
 In the project directory, you can run:
 
-## npm install
+### npm install
 
 Installs all the required dependencies in the local `node_modules` folder
 
-## npm run build
+### npm run build
 
 Creates an optimized production build in the local `build` folder
 
-## npm start
+### npm start
 
 Runs the app in the development mode
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
@@ -50,7 +59,7 @@ You will also see any lint errors in the console.
 Note that to run this application locally you will need to setup your own firebase backend
 and setup your Google API Key in /src/store/actions/auth.js
 
-## npm test
+### npm test
 
 Launches the test runner in the interactive watch mode.<br>
 See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
@@ -83,7 +92,7 @@ provide error handling functionality, asyncComponent is used to load some module
 
 
 
-## Components vs containers folders
+### Components vs containers folders
 
 - Components folder contains stateless components
 - Containers folder contains stateful components

@@ -7,7 +7,7 @@ This is a mobile first application for building and ordering a burger.
 Which looks like this :arrow_heading_down:
 
 
-![Scheme](https://bitbucket.org/elnurcoot/burger-builder-app-react/downloads/burger-builder-screenshot.png)
+![Screenshot](burger-builder-screenshot.png)
 
 ---
 

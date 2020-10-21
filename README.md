@@ -1,5 +1,7 @@
 # Burger Builder App :hamburger:
 
+[![Build Status](https://travis-ci.org/pseudonym42/Burger-Builder.svg?branch=master)](https://travis-ci.org/pseudonym42/Burger-Builder)
+
 ---
 
 This is a mobile first application for building and ordering a burger.

@@ -32,4 +32,5 @@ firebase-debug.log
 firebase.json
 .firebase
 .firebaserc
+database.rules.json
 DeploymentInstructions

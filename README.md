@@ -1,5 +1,7 @@
 # Burger Builder App :hamburger:
 
+[![Build Status](https://travis-ci.org/pseudonym42/Burger-Builder.svg?branch=master)](https://travis-ci.org/pseudonym42/Burger-Builder)
+
 ---
 
 This is a mobile first application for building and ordering a burger.
@@ -7,7 +9,7 @@ This is a mobile first application for building and ordering a burger.
 Which looks like this :arrow_heading_down:
 
 
-![Scheme](https://bitbucket.org/elnurcoot/burger-builder-app-react/downloads/burger-builder-screenshot.png)
+![Screenshot](burger-builder-screenshot.png)
 
 ---
 
@@ -61,11 +63,11 @@ and setup your Google API Key in /src/store/actions/auth.js
 
 ### npm test
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Launches the test runner in the interactive watch mode. See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information. In case you get error such as:
 
-In case you get <System limit for number of file watchers reached> run the following
-commands, which will temporarily increase the limit of inotify watchers:
+`Error: ENOSPC: System limit for number of file watchers reached...`
+  
+run the following commands, which will temporarily increase the limit of `inotify` watchers:
 
 - sudo sysctl fs.inotify.max_user_watches=524288
 - sudo sysctl -p
